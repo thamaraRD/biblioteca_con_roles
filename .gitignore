@@ -29,3 +29,6 @@ Temporary Items
 # Node_modules
 /client/node_modules
 /node_modules
+
+#Environmental variables
+.env
