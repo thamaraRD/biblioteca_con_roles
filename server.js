@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //Calling all routes
 require("./server/routes/user.routes")(app);
-
+require("./server/routes/books.routes")(app);
 //Using the port
 app.listen(process.env.PORT, () =>
   console.log(`CORS-enabled web server listening on port ${process.env.PORT}`)
