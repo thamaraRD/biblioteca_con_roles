@@ -42,3 +42,4 @@ module.exports.loginUser = async (req, res) => {
     res.status(403).json({ msg: "Credenciales inválidas", err });
   }
 };
+
