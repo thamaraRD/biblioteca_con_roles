@@ -28,7 +28,7 @@ module.exports.getOneBookById = async (req, res) => {
     const { id } = req.params;
     const book = await (
       await Books.findById(id)
-    ).populate("author", "firstName lastName role email");
+    ).populate("userId", "firstName lastName role email");
     return res.json(book);
   } catch (err) {
     return res.status(500).json({ error: err });
