@@ -1,8 +1,15 @@
+import { LoginProvider } from "./context/LoginContext";
+import { UserProvider } from "./context/UserContext";
+import { AppRoutes } from "./routes/AppRoutes";
+
+
 function App() {
   return (
-    <>
-      <h1>Hola React!</h1>
-    </>
+    <LoginProvider>
+      <UserProvider>
+      <AppRoutes />
+  </UserProvider>
+    </LoginProvider>
   );
 }
 
