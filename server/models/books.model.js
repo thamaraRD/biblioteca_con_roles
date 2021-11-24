@@ -1,46 +1,50 @@
 const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
 
-const BookSchema = new mongoose.Schema({
-author:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'UserModel',
-        required: [true, 'ID es requerido']
+const BookSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserModel",
+      required: [true, "ID del admin es requerido"],
     },
-title: {
-        type: String,
-        required: [true, 'Se requiere de un título'],
-        minlength:[4, 'El título debe tener más de 4 caracteres']
+    author: {
+      type: String,
+      required: [true, "El libro requiere un autor"],
+      minlength: [3, "El autor debe tener más de 3 caracteres"],
     },
-year: {
-        type: Number,
-        required: [true, "Se requiere el año de publicación"],
+    title: {
+      type: String,
+      required: [true, "Se requiere de un título"],
+      minlength: [4, "El título debe tener más de 4 caracteres"],
     },
-editorial:{
-        type: String,
-        required: [true, 'Se requiere el nombre de la editorial']
+    year: {
+      type: Number,
+      required: [true, "Se requiere el año de publicación"],
     },
-gender:{
-        type: String,
-        required: [true, 'Se requiere de un género literario']
+    publisher: {
+      type: String,
+      required: [true, "Se requiere el nombre de la editorial"],
     },
-numberOfPages:{
-        type: Number,
-        required: [true, 'Indique el numero de páginas del libro']
+    subject: {
+      type: String,
+      required: [true, "Se requiere de un género literario"],
     },
-// bookImageUrl: {
-//         type: String,
-//         required: [true, 'La imagen del libro es requerida']
-//     },
-comments:{
-        type: [Object]
+    numberOfPages: {
+      type: Number,
+      required: [true, "Indique el numero de páginas del libro"],
     },
-rating: {
-        type: Array
-    }
-
-}, {timestamps: true});
+    bookImageUrl: {
+      type: String,
+    },
+    comments: {
+      type: [Object],
+    },
+    rating: {
+      type: Array,
+    },
+  },
+  { timestamps: true }
+);
 
 const Books = mongoose.model("Books", BookSchema);
-BookSchema.plugin(uniqueValidator, { message: "{PATH} debe ser único" });
 module.exports = Books;
