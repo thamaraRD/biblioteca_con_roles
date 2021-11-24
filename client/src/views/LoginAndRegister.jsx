@@ -36,9 +36,9 @@ const LoginAndRegister = () => {
       console.log(response.data);
       Swal.fire({
         title: "Registro exitoso",
-        text: `${values.firstName} se registro con éxito`,
+        text: `${values.firstName} se registró con éxito`,
         icon: "success",
-        confirmButtonText: "¡Que Bien!",
+        confirmButtonText: "¡Qué bien!",
       }).then((result) => {
         if (result.isConfirmed) {
           setIsLogin(true);
@@ -90,8 +90,10 @@ const LoginAndRegister = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      history.push("/");
+    if (user?.role === "admin") {
+      history.push("/admin/books");
+    } else if (user?.role === "basic") {
+      history.push("/user/books");
     }
     location.pathname === "/register" ? setIsLogin(false) : setIsLogin(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -101,14 +103,14 @@ const LoginAndRegister = () => {
       <Container className="mx-auto my-5">
         <Row className="justify-content-center align-items-center">
           <Col className="col-5 bg-light shadow">
-            {isLogin ? <h1>Login</h1> : <h1>Registro</h1>}
+            <h1 className="text-center">{isLogin ? "Login" : "Registro"}</h1>
             <UserForm
               isLogin={isLogin}
               formHandler={isLogin ? loginUser : registerUser}
-              nameButton={isLogin ? "Acceder" : "Registrarse"}
+              nameButton={isLogin ? "Login" : "Registrarse"}
             />
             <Button variant="success" className="my-2" onClick={handleLogin}>
-              {!isLogin ? "Acceder" : "Registrarse"}
+              {!isLogin ? "Ir al login" : "Me voy a registrar"}
             </Button>
           </Col>
         </Row>
