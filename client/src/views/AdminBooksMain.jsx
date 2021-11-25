@@ -154,14 +154,9 @@ export const AdminBooksMain = () => {
     {
       key: uid(),
       title: "Img",
+      dataIndex: "bookImageUrl",
       render: (record) => {
-        return (
-          <Image
-            height={30}
-            src={!record ? noBookCover : record.bookImageUrl}
-            alt={!record ? "Sin imagen" : record.title}
-          />
-        );
+        return <Image height={60} src={!record ? noBookCover : record} />;
       },
     },
     {
@@ -172,7 +167,7 @@ export const AdminBooksMain = () => {
           <>
             <EditOutlined
               style={{ color: "#F18F01", marginLeft: 5, fontSize: 18 }}
-              onClick={() => history.push(`/admin/editar/${record._id}`)}
+              onClick={() => history.push(`/admin/book/edit/${record._id}`)}
             />
             <DeleteOutlined
               style={{ color: "#E63F32", marginLeft: 16, fontSize: 18 }}
@@ -207,7 +202,7 @@ export const AdminBooksMain = () => {
           <Button
             type="primary"
             className="d-block"
-            onClick={() => history.push("/admin/crear-libro")}
+            onClick={() => history.push("/admin/book/new")}
           >
             Registrar un libro
           </Button>

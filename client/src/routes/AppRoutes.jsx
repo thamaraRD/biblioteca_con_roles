@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AdminBooksMain } from "../views/AdminBooksMain";
+import { AdminNewEditScreen } from "../views/AdminNewEditScreen";
 import LoginAndRegister from "../views/LoginAndRegister";
 
 export const AppRoutes = () => {
@@ -15,6 +16,12 @@ export const AppRoutes = () => {
         </Route>
         <Route exact path="/admin/books">
           <AdminBooksMain />
+        </Route>
+        <Route exact path="/admin/book/new">
+          <AdminNewEditScreen />
+        </Route>
+        <Route exact path="/admin/book/edit/:id">
+          <AdminNewEditScreen />
         </Route>
       </Switch>
     </Router>

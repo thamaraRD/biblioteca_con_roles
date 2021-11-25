@@ -1,5 +1,4 @@
 const Books = require("../models/books.model");
-const { loginUser } = require("../controllers/user.controllers");
 
 //Crear la info del libro [admin]
 module.exports.createBookInfo = async (req, res) => {
@@ -26,9 +25,7 @@ module.exports.getBookByUser = async (req, res) => {
 module.exports.getOneBookById = async (req, res) => {
   try {
     const { id } = req.params;
-    const book = await (
-      await Books.findById(id)
-    ).populate("userId", "firstName lastName role email");
+    const book = await Books.findById({ _id: id });
     return res.json(book);
   } catch (err) {
     return res.status(500).json({ error: err });
@@ -47,7 +44,7 @@ module.exports.deleteBookById = async (req, res) => {
     return res.status(500).json({ error: err });
   }
 };
-//Actualizar vino by ID
+//Actualizar libro by ID
 module.exports.updateBookById = async (req, res) => {
   try {
     const { id } = req.params;
