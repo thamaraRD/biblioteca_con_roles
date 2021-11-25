@@ -30,13 +30,13 @@ const LoginAndRegister = () => {
   const registerUser = async (values, { resetForm }) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/auth/register",
+        `${process.env.REACT_APP_API_URL}/auth/register`,
         values
       );
       console.log(response.data);
       Swal.fire({
         title: "Registro exitoso",
-        text: `${values.firstName} se registró con éxito`,
+        text: `${values.firstName} se registró con éxito, porfavor inicie sesión`,
         icon: "success",
         confirmButtonText: "¡Qué bien!",
       }).then((result) => {
@@ -60,7 +60,7 @@ const LoginAndRegister = () => {
   const loginUser = async (values) => {
     try {
       const login = await axios.post(
-        "http://localhost:8000/api/auth/login",
+        `${process.env.REACT_APP_API_URL}/auth/login`,
         values
       );
       console.log("Data de axios:", login.data);

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { AdminBooksMain } from "../views/AdminBooksMain";
 import { AdminNewEditScreen } from "../views/AdminNewEditScreen";
 import LoginAndRegister from "../views/LoginAndRegister";
+import { UserBooksMain } from "../views/UserBooksMain";
 
 export const AppRoutes = () => {
   return (
@@ -22,6 +23,9 @@ export const AppRoutes = () => {
         </Route>
         <Route exact path="/admin/book/edit/:id">
           <AdminNewEditScreen />
+        </Route>
+        <Route exact path="/user/books">
+          <UserBooksMain />
         </Route>
       </Switch>
     </Router>
