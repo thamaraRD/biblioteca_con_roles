@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "antd/dist/antd.css";
-import { Table, Image, Badge, Button, Row, Col, Rate } from "antd";
+import { Table, Image, Badge, Button, Row, Col, Rate, Modal } from "antd";
 import { axiosWithToken } from "../helpers/axiosWithToken";
 import { EditOutlined } from "@ant-design/icons";
 import noBookCover from "../images/book-without-cover.gif";
@@ -10,7 +10,6 @@ import Swal from "sweetalert2";
 import { uid } from "../helpers/uniqueId";
 import { uniqueArrayData } from "../helpers/uniqueArrayData";
 import styles from "../scss/AdminBooksMain.module.scss";
-import { UserEditModal } from "../components/UserEditModal";
 
 const KEY = "biblioteca-app";
 
@@ -21,7 +20,24 @@ export const UserBooksMain = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const history = useHistory();
+  const [valuesToEdit, setValuesToEdit] = useState({});
+
+  //Lógica del modal editar libro
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (record) => {
+    console.log(record);
+    setIsModalVisible(true);
+    setValuesToEdit(record);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   //Obtener todos los libros de la base de datos
   const getAllBooks = async () => {
@@ -176,7 +192,9 @@ export const UserBooksMain = () => {
           <>
             <EditOutlined
               style={{ color: "#F18F01", marginLeft: 5, fontSize: 18 }}
-              onClick={<UserEditModal hacerVisible={setIsModalVisible(true)}/>}
+              onClick={() => {
+                showModal(record);
+              }}
             />
           </>
         );
@@ -233,6 +251,15 @@ export const UserBooksMain = () => {
           )}
         </Col>
       </Row>
+      <Modal
+        title="Editar libro"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Autor: {valuesToEdit.author}</p>
+        <p>Título: {valuesToEdit.title}</p>
+      </Modal>
     </>
   );
 };
