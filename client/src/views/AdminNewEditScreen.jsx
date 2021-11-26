@@ -48,6 +48,7 @@ export const AdminNewEditScreen = () => {
   };
 
   const newBook = async (values) => {
+    console.log("Values adentro del newBook", values);
     try {
       await axiosWithToken(
         "book/create",
