@@ -1,6 +1,5 @@
 //FIXME: Traer la data precargada cuando editemos un rating/comentario en el modal
 //TODO: actualizar la tabla sin llamar la api de getAllBooks
-//TODO: hacer push a comentarios y ratings sin sustituir los existentes
 
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -47,13 +46,15 @@ export const UserBooksMain = () => {
     setValuesToEdit(record);
   };
 
-  const handleOk = (record) => {
-    setIsModalVisible(false);
-    setInitialData({
-      rating: record.rating,
-      comments: record.comments,
-    });
-    processSubmit();
+  const handleOk = () => {
+    if (onFinishFailed() === false) {
+      setIsModalVisible(false);
+      // setInitialData({
+      //   rating: record.rating,
+      //   comments: record.comments,
+      // });
+      processSubmit();
+    }
   };
 
   const handleCancel = () => {
@@ -64,11 +65,20 @@ export const UserBooksMain = () => {
     // console.log("Values del submit form", values?.comments, values?.rating);
     const dataToAxios = {
       ...valuesToEdit,
-      rating: values?.rating,
-      comments: {
-        AuthorIdComment: user._id,
-        comment: values?.comments,
-      },
+      rating:
+        valuesToEdit.rating.length === 0
+          ? values?.rating
+          : [...valuesToEdit.rating, values?.rating],
+      comments:
+        valuesToEdit.comments.length === 0
+          ? {
+              AuthorIdComment: user._id,
+              comment: values?.comments,
+            }
+          : [
+              ...valuesToEdit.comments,
+              { AuthorIdComment: user._id, comment: values?.comments },
+            ],
     };
     try {
       const response = await axiosWithToken(
@@ -267,7 +277,8 @@ export const UserBooksMain = () => {
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    console.log("Failed", errorInfo);
+    if (errorInfo === undefined) return false;
   };
 
   const [form] = Form.useForm();
@@ -338,16 +349,23 @@ export const UserBooksMain = () => {
         <p>Título: {valuesToEdit.title}</p>
         <Form
           form={form}
-          name="validate_other"
+          name="user_books_edit"
           id="user-edit-book"
           onFinish={processSubmit}
           initialValues={initialData}
           onFinishFailed={onFinishFailed}
         >
-          <Form.Item name="rating" label="Puntaje">
+          <Form.Item
+            name="rating"
+            label="Puntaje"
+            rules={[{ required: true, message: "Este campo es requerido" }]}
+          >
             <Rate allowHalf />
           </Form.Item>
-          <Form.Item name={["comments"]}>
+          <Form.Item
+            name={["comments"]}
+            rules={[{ required: true, message: "Este campo es requerido" }]}
+          >
             <Input.TextArea
               placeholder="Deja un comentario al libro"
               showCount
