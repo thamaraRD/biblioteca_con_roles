@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const BookSchema = new mongoose.Schema(
   {
-    userId: {
+    adminId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserModel",
       required: [true, "ID del admin es requerido"],

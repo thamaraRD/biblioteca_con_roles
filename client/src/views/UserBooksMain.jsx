@@ -1,3 +1,7 @@
+//FIXME: Traer la data precargada cuando editemos un rating/comentario en el modal
+//TODO: actualizar la tabla sin llamar la api de getAllBooks
+//TODO: hacer push a comentarios y ratings sin sustituir los existentes
+
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "antd/dist/antd.css";
@@ -43,13 +47,12 @@ export const UserBooksMain = () => {
     setValuesToEdit(record);
   };
 
-  const handleOk = (values) => {
+  const handleOk = (record) => {
     setIsModalVisible(false);
-    // setInitialData({
-    //   rating: record.rating,
-    //   comments: record.comments,
-    // });
-    console.log("Values al darle ok al modal", values);
+    setInitialData({
+      rating: record.rating,
+      comments: record.comments,
+    });
     processSubmit();
   };
 
@@ -57,8 +60,43 @@ export const UserBooksMain = () => {
     setIsModalVisible(false);
   };
 
-  const processSubmit = () => {
-    console.log("No hago nada aún", initialData);
+  const processSubmit = async (values) => {
+    // console.log("Values del submit form", values?.comments, values?.rating);
+    const dataToAxios = {
+      ...valuesToEdit,
+      rating: values?.rating,
+      comments: {
+        AuthorIdComment: user._id,
+        comment: values?.comments,
+      },
+    };
+    try {
+      const response = await axiosWithToken(
+        `book/update/${valuesToEdit._id}`,
+        dataToAxios,
+        "PUT"
+      );
+      console.log("Respuesta al actualizar libro", response);
+      Swal.fire({
+        icon: "success",
+        title: "Gracias por su rating/comentario",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } catch (err) {
+      console.log("Error al modificar el libro", err);
+      if (err.response.status === 401) {
+        Swal.fire({
+          icon: "error",
+          title: "Su sesión ha expirado. Debe volver a iniciar sesión.",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        setTimeout(() => {
+          handleLogOut();
+        }, 2100);
+      }
+    }
   };
 
   //Obtener todos los libros de la base de datos
@@ -282,6 +320,11 @@ export const UserBooksMain = () => {
       <Modal
         title="Editar libro"
         visible={isModalVisible}
+        okButtonProps={{
+          form: "user-edit-book",
+          key: "submit",
+          htmlType: "submit",
+        }}
         onOk={handleOk}
         onCancel={handleCancel}
       >
@@ -296,6 +339,7 @@ export const UserBooksMain = () => {
         <Form
           form={form}
           name="validate_other"
+          id="user-edit-book"
           onFinish={processSubmit}
           initialValues={initialData}
           onFinishFailed={onFinishFailed}
