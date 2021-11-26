@@ -1,5 +1,4 @@
 import React from "react";
-// import React, { useState, useEffect } from "react";
 import { Form, Select, InputNumber, Button, Input, Row, Col } from "antd";
 
 const { Option } = Select;
@@ -21,30 +20,7 @@ export const AdminNewEditLogic = ({
   initialValues,
   titleButton,
 }) => {
-  // const [list, setList] = useState("");
-  // const [subList, setSubList] = useState("");
-
   const [form] = Form.useForm();
-
-  // const handleChangeSubject = (value) => {
-  //   setList(value);
-  // setSubList("");
-  // form.setFieldsValue({
-  //   variety: "",
-  // });
-  // console.log(`Selected ${value}`);
-  // };
-
-  // const handleChangeVariety = (value) => {
-  //   console.log("Valor variety", value);
-  //   setSubList(value);
-  // };
-
-  // useEffect(() => {
-  //   setList(initialValues.subject);
-  //   // setSubList(initialValues.variety);
-  // }, []); //eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <Row>
       <Col

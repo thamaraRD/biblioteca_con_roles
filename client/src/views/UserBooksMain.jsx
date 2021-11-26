@@ -1,7 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "antd/dist/antd.css";
-import { Table, Image, Badge, Button, Row, Col, Rate, Modal } from "antd";
+import {
+  Table,
+  Image,
+  Badge,
+  Button,
+  Row,
+  Col,
+  Rate,
+  Modal,
+  Input,
+  Form,
+} from "antd";
 import { axiosWithToken } from "../helpers/axiosWithToken";
 import { EditOutlined } from "@ant-design/icons";
 import noBookCover from "../images/book-without-cover.gif";
@@ -9,7 +20,7 @@ import { UserContext } from "../context/UserContext";
 import Swal from "sweetalert2";
 import { uid } from "../helpers/uniqueId";
 import { uniqueArrayData } from "../helpers/uniqueArrayData";
-import styles from "../scss/AdminBooksMain.module.scss";
+import styles from "../scss/UserBooksMain.module.scss";
 
 const KEY = "biblioteca-app";
 
@@ -21,22 +32,33 @@ export const UserBooksMain = () => {
   const [pageSize, setPageSize] = useState(10);
   const history = useHistory();
   const [valuesToEdit, setValuesToEdit] = useState({});
+  const [initialData, setInitialData] = useState("");
 
   //Lógica del modal editar libro
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = (record) => {
-    console.log(record);
+    console.log("Record en show modal", record);
     setIsModalVisible(true);
     setValuesToEdit(record);
   };
 
-  const handleOk = () => {
+  const handleOk = (values) => {
     setIsModalVisible(false);
+    // setInitialData({
+    //   rating: record.rating,
+    //   comments: record.comments,
+    // });
+    console.log("Values al darle ok al modal", values);
+    processSubmit();
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const processSubmit = () => {
+    console.log("No hago nada aún", initialData);
   };
 
   //Obtener todos los libros de la base de datos
@@ -206,6 +228,12 @@ export const UserBooksMain = () => {
     console.log("Table params", pagination, filters, sorter);
   };
 
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  const [form] = Form.useForm();
+
   return (
     <>
       <Row justify="center">
@@ -257,8 +285,32 @@ export const UserBooksMain = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
+        <div className={styles.imageModal}>
+          <img
+            src={valuesToEdit.bookImageUrl}
+            alt={`Portada del libro ${valuesToEdit.title}`}
+          />
+        </div>
         <p>Autor: {valuesToEdit.author}</p>
         <p>Título: {valuesToEdit.title}</p>
+        <Form
+          form={form}
+          name="validate_other"
+          onFinish={processSubmit}
+          initialValues={initialData}
+          onFinishFailed={onFinishFailed}
+        >
+          <Form.Item name="rating" label="Puntaje">
+            <Rate allowHalf />
+          </Form.Item>
+          <Form.Item name={["comments"]}>
+            <Input.TextArea
+              placeholder="Deja un comentario al libro"
+              showCount
+              maxLength={400}
+            />
+          </Form.Item>
+        </Form>
       </Modal>
     </>
   );
