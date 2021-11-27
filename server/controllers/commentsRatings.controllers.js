@@ -9,8 +9,16 @@ module.exports.createCR = async (req, res) => {
       rating: req.body.rating,
       comment: req.body.comment,
     };
-    const createCR = await CommentRating.create(data);
-    return res.json(createCR);
+    const crById = await CommentRating.find({
+      user: data.user,
+      book: data.book,
+    });
+    if (crById.length > 0) {
+      return res.status(403).json({ error: "Usuario ya comentó este libro" });
+    } else {
+      const createCR = await CommentRating.create(data);
+      return res.json(createCR);
+    }
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: err });
@@ -47,15 +55,23 @@ module.exports.updateCRById = async (req, res) => {
       .json({ error: err, msg: "error al editar los comentarios por el id" });
   }
 };
-// //Traernos todos los comentarios y ratings por Id del libro
-module.exports.getAllCRbyBook = async (req, res) => {
+//Todos los comentarios/rating de los libros
+module.exports.getAllCRByBook = async (req, res) => {
   try {
-    const allCRdata = await CommentRating.find({ _id: req.params.id });
-    return res.json(allCRdata);
+    const crById = await CommentRating.find({ book: req.params.id }).populate(
+      "user",
+      "firstName"
+    );
+    const data = {
+      avgRating:
+        crById.map((ele) => ele.rating).reduce((prev, acc) => prev + acc) /
+        crById.length,
+      comments: crById,
+    };
+    return res.json(data);
   } catch (err) {
-    return res.status(500).json({
-      error: err,
-      msg: "error al traernos todos los comentarios/rating por el id del libro",
-    });
+    return res
+      .status(500)
+      .json({ error: err, msg: "error al traerse los comentarios por el id" });
   }
 };
