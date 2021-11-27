@@ -1,6 +1,7 @@
-//FIXME: Traer la data precargada cuando editemos un rating/comentario en el modal
+//FIXME: Traer la data precargada cuando editemos un rating/comentario en el modal (CORREGIR COMA QUE SALE)
 //TODO: actualizar la tabla sin llamar la api de getAllBooks
-//TODO: hacer push a comentarios y ratings sin sustituir los existentes
+//TODO: Botón de ver en la columna de Acciones para ver todos los comentarios
+//FIXME: al actualizar rating/comentario, agrega uno nuevo
 
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -25,35 +26,54 @@ import Swal from "sweetalert2";
 import { uid } from "../helpers/uniqueId";
 import { uniqueArrayData } from "../helpers/uniqueArrayData";
 import styles from "../scss/UserBooksMain.module.scss";
+import { noStartEndCommas } from "../helpers/noStartEndCommas";
 
 const KEY = "biblioteca-app";
 
 export const UserBooksMain = () => {
   const [books, setBooks] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [loaded2, setLoaded2] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const history = useHistory();
   const [valuesToEdit, setValuesToEdit] = useState({});
-  const [initialData, setInitialData] = useState("");
+  const [initialData, setInitialData] = useState([]);
 
   //Lógica del modal editar libro
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const showModal = (record) => {
+  const showModal = async (record) => {
+    try {
+      const bookById = await axiosWithToken(`book/${record._id}`);
+      setInitialData(bookById.data);
+      setLoaded2(true);
+      console.log("Initial data del show modal", initialData);
+    } catch (err) {
+      console.log("Error al traer el libro por el Id", err);
+      if (err.response.status === 401) {
+        Swal.fire({
+          icon: "error",
+          title: "Su sesión ha expirado. Debe volver a iniciar sesión.",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        setTimeout(() => {
+          handleLogOut();
+        }, 2100);
+      }
+    }
     console.log("Record en show modal", record);
     setIsModalVisible(true);
     setValuesToEdit(record);
   };
 
-  const handleOk = (record) => {
-    setIsModalVisible(false);
-    setInitialData({
-      rating: record.rating,
-      comments: record.comments,
-    });
-    processSubmit();
+  const handleOk = () => {
+    if (onFinishFailed() !== false) {
+      setIsModalVisible(false);
+      processSubmit();
+    }
   };
 
   const handleCancel = () => {
@@ -64,11 +84,20 @@ export const UserBooksMain = () => {
     // console.log("Values del submit form", values?.comments, values?.rating);
     const dataToAxios = {
       ...valuesToEdit,
-      rating: values?.rating,
-      comments: {
-        AuthorIdComment: user._id,
-        comment: values?.comments,
-      },
+      rating:
+        valuesToEdit.rating.length === 0
+          ? values?.rating
+          : [...valuesToEdit.rating, values?.rating],
+      comments:
+        valuesToEdit.comments.length === 0
+          ? {
+              AuthorIdComment: user._id,
+              comment: values?.comments,
+            }
+          : [
+              ...valuesToEdit.comments,
+              { AuthorIdComment: user._id, comment: values?.comments },
+            ],
     };
     try {
       const response = await axiosWithToken(
@@ -267,7 +296,12 @@ export const UserBooksMain = () => {
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    console.log("Failed", errorInfo);
+    if (
+      errorInfo?.values.rating === undefined ||
+      errorInfo?.values.rating === undefined
+    )
+      return false;
   };
 
   const [form] = Form.useForm();
@@ -336,25 +370,45 @@ export const UserBooksMain = () => {
         </div>
         <p>Autor: {valuesToEdit.author}</p>
         <p>Título: {valuesToEdit.title}</p>
-        <Form
-          form={form}
-          name="validate_other"
-          id="user-edit-book"
-          onFinish={processSubmit}
-          initialValues={initialData}
-          onFinishFailed={onFinishFailed}
-        >
-          <Form.Item name="rating" label="Puntaje">
-            <Rate allowHalf />
-          </Form.Item>
-          <Form.Item name={["comments"]}>
-            <Input.TextArea
-              placeholder="Deja un comentario al libro"
-              showCount
-              maxLength={400}
-            />
-          </Form.Item>
-        </Form>
+        {loaded2 && (
+          <Form
+            form={form}
+            name="user_books_edit"
+            id="user-edit-book"
+            onFinish={processSubmit}
+            initialValues={{
+              rating:
+                initialData?.rating.length === 0
+                  ? 0
+                  : initialData?.rating.reduce((prev, curr) => prev + curr) /
+                    initialData?.rating.length,
+              comments: initialData?.comments.map((comment) =>
+                comment.AuthorIdComment === user?._id
+                  ? noStartEndCommas(comment.comment)
+                  : null
+              ),
+            }}
+            onFinishFailed={onFinishFailed}
+          >
+            <Form.Item
+              name="rating"
+              label="Puntaje"
+              rules={[{ required: true, message: "Este campo es requerido" }]}
+            >
+              <Rate allowHalf />
+            </Form.Item>
+            <Form.Item
+              name={["comments"]}
+              rules={[{ required: true, message: "Este campo es requerido" }]}
+            >
+              <Input.TextArea
+                placeholder="Deja un comentario al libro"
+                showCount
+                maxLength={400}
+              />
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </>
   );
