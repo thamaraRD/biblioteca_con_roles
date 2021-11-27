@@ -63,8 +63,71 @@ module.exports.updateBookById = async (req, res) => {
 //Traerse todos los libros
 module.exports.getAllBooks = async (_, res) => {
   try {
-    const books = await Books.find();
-    return res.json({ books });
+    const books = await Books.aggregate([
+      {
+        $project: {
+          title: 0,
+          publisher: 0,
+        },
+      },
+    ]);
+    return res.json(books);
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
+};
+//Libros con comentarios y ratings
+module.exports.getBooksRC = async (_, res) => {
+  try {
+    const books = await Books.aggregate([
+      {
+        $lookup: {
+          from: "commentratings",
+          localField: "_id",
+          foreignField: "book",
+          as: "comments",
+        },
+      },
+      {
+        $unwind: {
+          path: "$comments",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          title: {
+            $last: "$title",
+          },
+          author: {
+            $last: "$author",
+          },
+          imgUrl: {
+            $last: "$bookImageUrl",
+          },
+          avgRating: {
+            $avg: "$comments.rating",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "commentratings",
+          localField: "_id",
+          foreignField: "book",
+          as: "comments",
+        },
+      },
+      {
+        $sort: {
+          avgRating: -1,
+        },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
+    return res.json(books);
   } catch (err) {
     return res.status(500).json({ error: err });
   }
