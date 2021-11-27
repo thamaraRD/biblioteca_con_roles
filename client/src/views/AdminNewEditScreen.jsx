@@ -52,7 +52,7 @@ export const AdminNewEditScreen = () => {
     try {
       await axiosWithToken(
         "book/create",
-        { ...values, userId: user._id },
+        { ...values, adminId: user._id },
         "POST"
       );
       Swal.fire({

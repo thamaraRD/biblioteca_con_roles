@@ -30,7 +30,7 @@ const UserSchema = new Schema(
     role: {
       type: String,
       default: "basic",
-      enum: ["basic", "admin"]
+      enum: ["basic", "admin"],
     },
   },
   { timestamps: true }
@@ -40,5 +40,5 @@ const UserSchema = new Schema(
 UserSchema.plugin(uniqueValidator, { message: "{PATH} debe ser único" });
 
 //Convertir el esquema en modelo y exportarlo
-const UserModel = model("User model", UserSchema);
+const UserModel = model("UserModel", UserSchema);
 module.exports = UserModel;

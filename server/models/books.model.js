@@ -36,12 +36,6 @@ const BookSchema = new mongoose.Schema(
     bookImageUrl: {
       type: String,
     },
-    comments: {
-      type: [Object],
-    },
-    rating: {
-      type: Array,
-    },
   },
   { timestamps: true }
 );
