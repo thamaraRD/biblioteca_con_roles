@@ -2,7 +2,7 @@ const UserModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const { genJWT } = require("../helpers/jwt");
 
-//Método para registrar un usario
+//Método para registrar un usuario
 module.exports.registerUser = async (req, res) => {
   try {
     const newUser = UserModel(req.body);
@@ -42,4 +42,3 @@ module.exports.loginUser = async (req, res) => {
     res.status(403).json({ msg: "Credenciales inválidas", err });
   }
 };
-
