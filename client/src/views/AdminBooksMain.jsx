@@ -18,22 +18,23 @@ export const AdminBooksMain = () => {
   const [loaded, setLoaded] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(6);
   const history = useHistory();
 
   //Obtener todos los libros de la base de datos
   const getAllBooks = async () => {
     try {
       const booksData = await axiosWithToken("books");
-      const result = booksData.data.books.map((row) => ({
+      console.log("Todos los libros", booksData.data);
+      const result = booksData.data.map((row) => ({
         ...row,
         key: uid(),
       }));
       setBooks(result);
       setLoaded(true);
-      console.log("Todos los libros", booksData.data.books);
     } catch (err) {
       console.log("Error al consultar todos los libros");
+      console.log("error", err);
       if (err.response.status === 401) {
         Swal.fire({
           icon: "error",
@@ -137,7 +138,7 @@ export const AdminBooksMain = () => {
     },
     {
       key: uid(),
-      title: "Tema",
+      title: "Género",
       dataIndex: "subject",
       filters: uniqueArrayData(books, "subject").map((subject) => ({
         text: subject,
