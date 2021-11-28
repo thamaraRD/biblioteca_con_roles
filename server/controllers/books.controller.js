@@ -63,14 +63,7 @@ module.exports.updateBookById = async (req, res) => {
 //Traerse todos los libros
 module.exports.getAllBooks = async (_, res) => {
   try {
-    const books = await Books.aggregate([
-      {
-        $project: {
-          title: 0,
-          publisher: 0,
-        },
-      },
-    ]);
+    const books = await Books.find();
     return res.json(books);
   } catch (err) {
     return res.status(500).json({ error: err });

@@ -74,7 +74,7 @@ export const AdminNewEditLogic = ({
                 },
               ]}
             >
-              <InputNumber min={1800} max={2100} placeholder="2020" />
+              <InputNumber min={1500} max={2100} placeholder="2020" />
             </Form.Item>
           </Form.Item>
 
@@ -93,7 +93,7 @@ export const AdminNewEditLogic = ({
           </Form.Item>
 
           <Form.Item
-            label="Género liteario"
+            label="Género literario"
             name="subject"
             rules={[
               {
@@ -109,6 +109,9 @@ export const AdminNewEditLogic = ({
               <Option value="Historia">Historia</Option>
               <Option value="Ficción">Ficción</Option>
               <Option value="Autoayuda">Autoayuda</Option>
+              <Option value="Literatura">Literatura</Option>
+              <Option value="Drama">Drama</Option>
+              <Option value="Novela">Novela</Option>
             </Select>
           </Form.Item>
 

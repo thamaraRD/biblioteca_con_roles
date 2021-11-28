@@ -1,6 +1,5 @@
 //FIXME: Traer la data precargada cuando editemos un rating/comentario en el modal (CORREGIR COMA QUE SALE)
 //TODO: actualizar la tabla sin llamar la api de getAllBooks
-//TODO: Botón de ver en la columna de Acciones para ver todos los comentarios
 //FIXME: al actualizar rating/comentario, agrega uno nuevo
 
 import React, { useContext, useEffect, useState } from "react";
@@ -19,7 +18,7 @@ import {
   Form,
 } from "antd";
 import { axiosWithToken } from "../helpers/axiosWithToken";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, WechatOutlined } from "@ant-design/icons";
 import noBookCover from "../images/book-without-cover.gif";
 import { UserContext } from "../context/UserContext";
 import Swal from "sweetalert2";
@@ -36,7 +35,7 @@ export const UserBooksMain = () => {
   const [loaded2, setLoaded2] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(6);
   const history = useHistory();
   const [valuesToEdit, setValuesToEdit] = useState({});
   const [initialData, setInitialData] = useState([]);
@@ -47,7 +46,7 @@ export const UserBooksMain = () => {
   const showModal = async (record) => {
     try {
       const bookById = await axiosWithToken(`book/${record._id}`);
-      setInitialData(bookById.data);
+      setInitialData(bookById.data.book);
       setLoaded2(true);
       console.log("Initial data del show modal", initialData);
     } catch (err) {
@@ -82,27 +81,27 @@ export const UserBooksMain = () => {
 
   const processSubmit = async (values) => {
     // console.log("Values del submit form", values?.comments, values?.rating);
-    const dataToAxios = {
-      ...valuesToEdit,
-      rating:
-        valuesToEdit.rating.length === 0
-          ? values?.rating
-          : [...valuesToEdit.rating, values?.rating],
-      comments:
-        valuesToEdit.comments.length === 0
-          ? {
-              AuthorIdComment: user._id,
-              comment: values?.comments,
-            }
-          : [
-              ...valuesToEdit.comments,
-              { AuthorIdComment: user._id, comment: values?.comments },
-            ],
-    };
+    // const dataToAxios = {
+    //   ...valuesToEdit,
+    //   rating:
+    //     valuesToEdit.rating.length === 0
+    //       ? values?.rating
+    //       : [...valuesToEdit.rating, values?.rating],
+    //   comments:
+    //     valuesToEdit.comments.length === 0
+    //       ? {
+    //           AuthorIdComment: user._id,
+    //           comment: values?.comments,
+    //         }
+    //       : [
+    //           ...valuesToEdit.comments,
+    //           { AuthorIdComment: user._id, comment: values?.comments },
+    //         ],
+    // };
     try {
       const response = await axiosWithToken(
         `book/update/${valuesToEdit._id}`,
-        dataToAxios,
+        // dataToAxios,
         "PUT"
       );
       console.log("Respuesta al actualizar libro", response);
@@ -132,15 +131,16 @@ export const UserBooksMain = () => {
   const getAllBooks = async () => {
     try {
       const booksData = await axiosWithToken("books");
-      const result = booksData.data.books.map((row) => ({
+      console.log("Todos los libros", booksData.data);
+      const result = booksData.data.map((row) => ({
         ...row,
         key: uid(),
       }));
       setBooks(result);
       setLoaded(true);
-      console.log("Todos los libros", booksData.data.books);
     } catch (err) {
       console.log("Error al consultar todos los libros");
+      console.log("error", err);
       if (err.response.status === 401) {
         Swal.fire({
           icon: "error",
@@ -210,7 +210,7 @@ export const UserBooksMain = () => {
     },
     {
       key: uid(),
-      title: "Tema",
+      title: "Género",
       dataIndex: "subject",
       filters: uniqueArrayData(books, "subject").map((subject) => ({
         text: subject,
@@ -237,42 +237,11 @@ export const UserBooksMain = () => {
       title: "Rating",
       dataIndex: "rating",
       width: "15%",
-      sorter: (a, b) => a.rating - b.rating,
-      filters: uniqueArrayData(books, "rating")
-        .sort((a, b) => b - a)
-        .map((rate) => ({
-          text: (
-            <Rate
-              allowHalf
-              disabled
-              defaultValue={
-                rate.length === 0
-                  ? 0
-                  : rate.reduce((prev, curr) => prev + curr) / rate.length
-              }
-            />
-          ),
-          value:
-            rate.length === 0
-              ? 0
-              : rate.reduce((prev, curr) => prev + curr) / rate.length,
-        })),
-      onFilter: (value, record) =>
-        console.log("Value", value, "record", record),
       render: (record) => {
         return (
-          <Rate
-            allowHalf
-            disabled
-            defaultValue={
-              record.length === 0
-                ? 0
-                : record.reduce((prev, curr) => prev + curr) / record.length
-            }
-          />
+          <Rate />
         );
-      },
-    },
+    }},
     {
       key: uid(),
       title: "Acciones",
@@ -284,6 +253,9 @@ export const UserBooksMain = () => {
               onClick={() => {
                 showModal(record);
               }}
+            />
+            <WechatOutlined
+            style={{ color: "#3590ff", marginLeft: 8, fontSize: 22 }}
             />
           </>
         );
