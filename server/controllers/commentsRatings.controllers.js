@@ -62,16 +62,23 @@ module.exports.getAllCRByBook = async (req, res) => {
       "user",
       "firstName"
     );
-    const data = {
-      avgRating:
-        crById.map((ele) => ele.rating).reduce((prev, acc) => prev + acc) /
-        crById.length,
-      comments: crById,
-    };
-    return res.json(data);
+    // console.log("size object", Object.keys(crById).length);
+    if (Object.keys(crById).length === 0) {
+      return res.json({ avgRating: 0, comments: [], book: req.params.id });
+    } else {
+      const data = {
+        avgRating:
+          crById.map((ele) => ele.rating).reduce((prev, acc) => prev + acc) /
+          crById.length,
+        comments: crById,
+        book: req.params.id,
+      };
+      return res.json(data);
+    }
   } catch (err) {
-    return res
-      .status(500)
-      .json({ error: err, msg: "error al traerse los comentarios por el id" });
+    return res.status(500).json({
+      error: err,
+      msg: "error al traerse los comentarios por el id del libro",
+    });
   }
 };

@@ -10,18 +10,7 @@ module.exports.createBookInfo = async (req, res) => {
     return res.status(500).json({ error: err });
   }
 };
-//Traerse todos los libros ingresados por el User [¡Pendiente x revisar!]
-module.exports.getBookByUser = async (req, res) => {
-  try {
-    const bookUser = await Books.find({ author: req.params.id });
-    return res.json(bookUser);
-  } catch (err) {
-    return res
-      .status(500)
-      .json({ error: err, msg: "error al traerse los libros por el User" });
-  }
-};
-//Traerse un libro By ID [Admin- Basic]
+//Traerse un libro By ID (admin)
 module.exports.getOneBookById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -31,7 +20,7 @@ module.exports.getOneBookById = async (req, res) => {
     return res.status(500).json({ error: err });
   }
 };
-//Borrar libro by ID
+//Borrar libro by ID (admin)
 module.exports.deleteBookById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -44,7 +33,7 @@ module.exports.deleteBookById = async (req, res) => {
     return res.status(500).json({ error: err });
   }
 };
-//Actualizar libro by ID
+//Actualizar libro by ID (admin)
 module.exports.updateBookById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -60,7 +49,7 @@ module.exports.updateBookById = async (req, res) => {
     return res.status(500).json({ error: err });
   }
 };
-//Traerse todos los libros
+//Traerse todos los libros (admin)
 module.exports.getAllBooks = async (_, res) => {
   try {
     const books = await Books.find();
@@ -69,7 +58,7 @@ module.exports.getAllBooks = async (_, res) => {
     return res.status(500).json({ error: err });
   }
 };
-//Libros con comentarios y ratings
+//Libros con comentarios y ratings para el home page
 module.exports.getBooksRC = async (_, res) => {
   try {
     const books = await Books.aggregate([
@@ -84,6 +73,7 @@ module.exports.getBooksRC = async (_, res) => {
       {
         $unwind: {
           path: "$comments",
+          preserveNullAndEmptyArrays: true,
         },
       },
       {
@@ -95,11 +85,23 @@ module.exports.getBooksRC = async (_, res) => {
           author: {
             $last: "$author",
           },
-          imgUrl: {
+          bookImageUrl: {
             $last: "$bookImageUrl",
           },
           avgRating: {
             $avg: "$comments.rating",
+          },
+          year: {
+            $last: "$year",
+          },
+          publisher: {
+            $last: "$publisher",
+          },
+          numberOfPages: {
+            $last: "$numberOfPages",
+          },
+          subject: {
+            $last: "$subject",
           },
         },
       },
