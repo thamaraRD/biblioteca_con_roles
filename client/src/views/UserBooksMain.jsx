@@ -5,18 +5,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "antd/dist/antd.css";
-import {
-  Table,
-  Image,
-  Badge,
-  Button,
-  Row,
-  Col,
-  Rate,
-  Modal,
-  Input,
-  Form,
-} from "antd";
+import { Table, Image, Badge, Button, Row, Col, Rate } from "antd";
 import { axiosWithToken } from "../helpers/axiosWithToken";
 import { EditOutlined, WechatOutlined } from "@ant-design/icons";
 import noBookCover from "../images/book-without-cover.gif";
@@ -25,112 +14,21 @@ import Swal from "sweetalert2";
 import { uid } from "../helpers/uniqueId";
 import { uniqueArrayData } from "../helpers/uniqueArrayData";
 import styles from "../scss/UserBooksMain.module.scss";
-import { noStartEndCommas } from "../helpers/noStartEndCommas";
 
 const KEY = "biblioteca-app";
 
 export const UserBooksMain = () => {
   const [books, setBooks] = useState([]);
   const [loaded, setLoaded] = useState(false);
-  const [loaded2, setLoaded2] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
   const history = useHistory();
-  const [valuesToEdit, setValuesToEdit] = useState({});
-  const [initialData, setInitialData] = useState([]);
-
-  //Lógica del modal editar libro
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = async (record) => {
-    try {
-      const bookById = await axiosWithToken(`book/${record._id}`);
-      setInitialData(bookById.data.book);
-      setLoaded2(true);
-      console.log("Initial data del show modal", initialData);
-    } catch (err) {
-      console.log("Error al traer el libro por el Id", err);
-      if (err.response.status === 401) {
-        Swal.fire({
-          icon: "error",
-          title: "Su sesión ha expirado. Debe volver a iniciar sesión.",
-          showConfirmButton: false,
-          timer: 2000,
-        });
-        setTimeout(() => {
-          handleLogOut();
-        }, 2100);
-      }
-    }
-    console.log("Record en show modal", record);
-    setIsModalVisible(true);
-    setValuesToEdit(record);
-  };
-
-  const handleOk = () => {
-    if (onFinishFailed() !== false) {
-      setIsModalVisible(false);
-      processSubmit();
-    }
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const processSubmit = async (values) => {
-    // console.log("Values del submit form", values?.comments, values?.rating);
-    // const dataToAxios = {
-    //   ...valuesToEdit,
-    //   rating:
-    //     valuesToEdit.rating.length === 0
-    //       ? values?.rating
-    //       : [...valuesToEdit.rating, values?.rating],
-    //   comments:
-    //     valuesToEdit.comments.length === 0
-    //       ? {
-    //           AuthorIdComment: user._id,
-    //           comment: values?.comments,
-    //         }
-    //       : [
-    //           ...valuesToEdit.comments,
-    //           { AuthorIdComment: user._id, comment: values?.comments },
-    //         ],
-    // };
-    try {
-      const response = await axiosWithToken(
-        `book/update/${valuesToEdit._id}`,
-        // dataToAxios,
-        "PUT"
-      );
-      console.log("Respuesta al actualizar libro", response);
-      Swal.fire({
-        icon: "success",
-        title: "Gracias por su rating/comentario",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-    } catch (err) {
-      console.log("Error al modificar el libro", err);
-      if (err.response.status === 401) {
-        Swal.fire({
-          icon: "error",
-          title: "Su sesión ha expirado. Debe volver a iniciar sesión.",
-          showConfirmButton: false,
-          timer: 2000,
-        });
-        setTimeout(() => {
-          handleLogOut();
-        }, 2100);
-      }
-    }
-  };
 
   //Obtener todos los libros de la base de datos
   const getAllBooks = async () => {
     try {
-      const booksData = await axiosWithToken("books");
+      const booksData = await axiosWithToken("books/crs");
       console.log("Todos los libros", booksData.data);
       const result = booksData.data.map((row) => ({
         ...row,
@@ -235,13 +133,18 @@ export const UserBooksMain = () => {
     {
       key: uid(),
       title: "Rating",
-      dataIndex: "rating",
+      dataIndex: "avgRating",
       width: "15%",
       render: (record) => {
         return (
-          <Rate />
+          <Rate
+            allowHalf
+            disabled
+            defaultValue={record === null ? 0 : record}
+          />
         );
-    }},
+      },
+    },
     {
       key: uid(),
       title: "Acciones",
@@ -251,11 +154,11 @@ export const UserBooksMain = () => {
             <EditOutlined
               style={{ color: "#F18F01", marginLeft: 5, fontSize: 18 }}
               onClick={() => {
-                showModal(record);
+                history.push(`/user/book/${record._id}`);
               }}
             />
             <WechatOutlined
-            style={{ color: "#3590ff", marginLeft: 8, fontSize: 22 }}
+              style={{ color: "#3590ff", marginLeft: 8, fontSize: 22 }}
             />
           </>
         );
@@ -266,17 +169,6 @@ export const UserBooksMain = () => {
   const tableOnChange = (pagination, filters, sorter) => {
     console.log("Table params", pagination, filters, sorter);
   };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed", errorInfo);
-    if (
-      errorInfo?.values.rating === undefined ||
-      errorInfo?.values.rating === undefined
-    )
-      return false;
-  };
-
-  const [form] = Form.useForm();
 
   return (
     <>
@@ -323,65 +215,6 @@ export const UserBooksMain = () => {
           )}
         </Col>
       </Row>
-      <Modal
-        title="Editar libro"
-        visible={isModalVisible}
-        okButtonProps={{
-          form: "user-edit-book",
-          key: "submit",
-          htmlType: "submit",
-        }}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <div className={styles.imageModal}>
-          <img
-            src={valuesToEdit.bookImageUrl}
-            alt={`Portada del libro ${valuesToEdit.title}`}
-          />
-        </div>
-        <p>Autor: {valuesToEdit.author}</p>
-        <p>Título: {valuesToEdit.title}</p>
-        {loaded2 && (
-          <Form
-            form={form}
-            name="user_books_edit"
-            id="user-edit-book"
-            onFinish={processSubmit}
-            initialValues={{
-              rating:
-                initialData?.rating.length === 0
-                  ? 0
-                  : initialData?.rating.reduce((prev, curr) => prev + curr) /
-                    initialData?.rating.length,
-              comments: initialData?.comments.map((comment) =>
-                comment.AuthorIdComment === user?._id
-                  ? noStartEndCommas(comment.comment)
-                  : null
-              ),
-            }}
-            onFinishFailed={onFinishFailed}
-          >
-            <Form.Item
-              name="rating"
-              label="Puntaje"
-              rules={[{ required: true, message: "Este campo es requerido" }]}
-            >
-              <Rate allowHalf />
-            </Form.Item>
-            <Form.Item
-              name={["comments"]}
-              rules={[{ required: true, message: "Este campo es requerido" }]}
-            >
-              <Input.TextArea
-                placeholder="Deja un comentario al libro"
-                showCount
-                maxLength={400}
-              />
-            </Form.Item>
-          </Form>
-        )}
-      </Modal>
     </>
   );
 };
