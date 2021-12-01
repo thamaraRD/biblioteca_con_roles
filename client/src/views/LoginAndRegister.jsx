@@ -100,7 +100,7 @@ const LoginAndRegister = () => {
 
   return (
     <div>
-      <Container className="mx-auto my-5">
+      <Container className="mx-auto mt-5">
         <Row className="justify-content-center align-items-center">
           <Col className="col-5 bg-light shadow">
             <h1 className="text-center">{isLogin ? "Login" : "Registro"}</h1>

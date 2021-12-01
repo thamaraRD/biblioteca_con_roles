@@ -1,4 +1,5 @@
 const CommentRating = require("../models/commentsRatings.model");
+const Book = require("../models/books.model");
 
 //Crear comentario y rating [admin]
 module.exports.createCR = async (req, res) => {
@@ -24,7 +25,7 @@ module.exports.createCR = async (req, res) => {
     return res.status(500).json({ error: err });
   }
 };
-//Traer los comentarios y el rating por su ID
+//Traer los comentarios y el rating por el Id del comentario
 module.exports.getCRById = async (req, res) => {
   try {
     const crById = await CommentRating.find({ _id: req.params.id }).populate(
@@ -50,31 +51,48 @@ module.exports.updateCRById = async (req, res) => {
       updatedCR,
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ error: err, msg: "error al editar los comentarios por el id" });
+    return res.status(500).json({
+      error: err,
+      msg: "error al editar los comentarios/rating por el id",
+    });
   }
 };
-//Todos los comentarios/rating de los libros
+//Todos los comentarios/rating de un libro por su ID
 module.exports.getAllCRByBook = async (req, res) => {
   try {
     const crById = await CommentRating.find({ book: req.params.id }).populate(
       "user",
       "firstName"
     );
+    // .populate("book");
     // console.log("size object", Object.keys(crById).length);
     if (Object.keys(crById).length === 0) {
-      return res.json({ avgRating: 0, comments: [], book: req.params.id });
+      return res.json(crById);
     } else {
       const data = {
         avgRating:
           crById.map((ele) => ele.rating).reduce((prev, acc) => prev + acc) /
           crById.length,
         comments: crById,
-        book: req.params.id,
       };
       return res.json(data);
     }
+  } catch (err) {
+    return res.status(500).json({
+      error: err,
+      msg: "error al traerse los comentarios por el id del libro",
+    });
+  }
+};
+//Buscar libro y su posible comentario del usuario
+module.exports.getBookWhitCR = async (req, res) => {
+  try {
+    const libro = await Book.findOne({ _id: req.params.id });
+    const cr = await CommentRating.findOne({
+      book: req.params.id,
+      user: req.userId,
+    });
+    return res.json({ libro, cr });
   } catch (err) {
     return res.status(500).json({
       error: err,

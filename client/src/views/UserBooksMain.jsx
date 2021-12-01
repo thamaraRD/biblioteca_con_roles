@@ -1,11 +1,7 @@
-//FIXME: Traer la data precargada cuando editemos un rating/comentario en el modal (CORREGIR COMA QUE SALE)
-//TODO: actualizar la tabla sin llamar la api de getAllBooks
-//FIXME: al actualizar rating/comentario, agrega uno nuevo
-
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "antd/dist/antd.css";
-import { Table, Image, Badge, Button, Row, Col, Rate } from "antd";
+import { Table, Image, Badge, Button, Row, Col, Rate, Modal } from "antd";
 import { axiosWithToken } from "../helpers/axiosWithToken";
 import { EditOutlined, WechatOutlined } from "@ant-design/icons";
 import noBookCover from "../images/book-without-cover.gif";
@@ -14,6 +10,8 @@ import Swal from "sweetalert2";
 import { uid } from "../helpers/uniqueId";
 import { uniqueArrayData } from "../helpers/uniqueArrayData";
 import styles from "../scss/UserBooksMain.module.scss";
+import moment from "moment";
+import { Container } from "react-bootstrap";
 
 const KEY = "biblioteca-app";
 
@@ -28,7 +26,7 @@ export const UserBooksMain = () => {
   //Obtener todos los libros de la base de datos
   const getAllBooks = async () => {
     try {
-      const booksData = await axiosWithToken("books/crs");
+      const booksData = await axiosWithToken("books/user/crs");
       console.log("Todos los libros", booksData.data);
       const result = booksData.data.map((row) => ({
         ...row,
@@ -54,7 +52,6 @@ export const UserBooksMain = () => {
   };
   //Valido si usuario existe y si tiene el rol de admin
   useEffect(() => {
-    // console.log("User dentro del useEffect", user);
     if (user && user.role === "basic") {
       getAllBooks();
     } else {
@@ -135,6 +132,8 @@ export const UserBooksMain = () => {
       title: "Rating",
       dataIndex: "avgRating",
       width: "15%",
+      defaultSortOrder: "descend",
+      sorter: (a, b) => a.avgRating - b.avgRating,
       render: (record) => {
         return (
           <Rate
@@ -159,6 +158,7 @@ export const UserBooksMain = () => {
             />
             <WechatOutlined
               style={{ color: "#3590ff", marginLeft: 8, fontSize: 22 }}
+              onClick={() => showModal(record)}
             />
           </>
         );
@@ -170,9 +170,48 @@ export const UserBooksMain = () => {
     console.log("Table params", pagination, filters, sorter);
   };
 
+  const [allComments, setAllComments] = useState({});
+
+  const getAllCRByBook = async (record) => {
+    try {
+      const data = await axiosWithToken(`cr/book/${record._id}`);
+      setAllComments(data.data);
+    } catch (err) {
+      console.log("Error al consultar todos los libros");
+      console.log("error", err);
+      if (err.response.status === 401) {
+        Swal.fire({
+          icon: "error",
+          title: "Su sesión ha expirado. Debe volver a iniciar sesión.",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        setTimeout(() => {
+          handleLogOut();
+        }, 2100);
+      }
+    }
+  };
+
+  //Modal logic de mostrar comentarios
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (record) => {
+    setIsModalVisible(true);
+    getAllCRByBook(record);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   return (
-    <>
-      <Row justify="center">
+    <Container className="m-3 mx-auto">
+      <Row>
         <Col span={22}>
           <p className="text-end">Hola, {user?.firstName}</p>
           <Button
@@ -188,7 +227,7 @@ export const UserBooksMain = () => {
       </Row>
       <Row justify="center">
         <Col span={22}>
-          <h2 className="text-center">Libros disponibles</h2>
+          <h2 className="text-center">Lista de Libros</h2>
           {loaded && (
             <>
               <div>
@@ -215,6 +254,26 @@ export const UserBooksMain = () => {
           )}
         </Col>
       </Row>
-    </>
+      <Modal
+        title="Comentarios de los usuarios"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {allComments?.comments?.map((comment) => (
+          <div key={uid()}>
+            <p>
+              <b> Comentario de {comment?.user?.firstName}:</b>
+              <p>
+                {" "}
+                "<em>{comment?.comment}</em>"{" "}
+              </p>
+              publicado: {moment(comment?.updatedAt).startOf("hour").fromNow()}
+            </p>
+            <hr />
+          </div>
+        ))}
+      </Modal>
+    </Container>
   );
 };

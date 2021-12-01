@@ -1,7 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { NavbarMenu } from "../components/NavbarMenu";
 import { AdminBooksMain } from "../views/AdminBooksMain";
 import { AdminNewEditScreen } from "../views/AdminNewEditScreen";
+import { HomeScreen } from "../views/HomeScreen";
 import LoginAndRegister from "../views/LoginAndRegister";
 import { UserBooksContainer } from "../views/UserBooksContainer";
 import { UserBooksMain } from "../views/UserBooksMain";
@@ -9,6 +11,7 @@ import { UserBooksMain } from "../views/UserBooksMain";
 export const AppRoutes = () => {
   return (
     <Router>
+      <NavbarMenu />
       <Switch>
         <Route exact path="/login">
           <LoginAndRegister />
@@ -31,6 +34,9 @@ export const AppRoutes = () => {
         <Route exact path="/user/book/:id">
           <UserBooksContainer />
         </Route>
+        <Router exact path="/">
+        <HomeScreen />
+        </Router>
       </Switch>
     </Router>
   );
