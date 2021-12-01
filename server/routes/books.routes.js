@@ -4,7 +4,8 @@ const {
   deleteBookById,
   updateBookById,
   getAllBooks,
-  getBooksRC,
+  getBooksRCHomeScreen,
+  getBooksRCUserScreen,
 } = require("../controllers/books.controller");
 const { validateJWT } = require("../middlewares/validate-jwt");
 
@@ -14,5 +15,6 @@ module.exports = (app) => {
   app.put("/api/book/update/:id", validateJWT, updateBookById);
   app.get("/api/book/:id", validateJWT, getOneBookById);
   app.delete("/api/book/delete/:id", validateJWT, deleteBookById);
-  app.get("/api/books/crs", validateJWT, getBooksRC);
+  app.get("/api/books/homescreen/crs", getBooksRCHomeScreen);
+  app.get("/api/books/user/crs", validateJWT, getBooksRCUserScreen);
 };

@@ -59,7 +59,7 @@ module.exports.getAllBooks = async (_, res) => {
   }
 };
 //Libros con comentarios y ratings para el home page
-module.exports.getBooksRC = async (_, res) => {
+module.exports.getBooksRCHomeScreen = async (_, res) => {
   try {
     const books = await Books.aggregate([
       {
@@ -120,6 +120,67 @@ module.exports.getBooksRC = async (_, res) => {
       },
       {
         $limit: 10,
+      },
+    ]);
+    return res.json(books);
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
+};
+//Libros con comentarios y ratings para el user
+module.exports.getBooksRCUserScreen = async (_, res) => {
+  try {
+    const books = await Books.aggregate([
+      {
+        $lookup: {
+          from: "commentratings",
+          localField: "_id",
+          foreignField: "book",
+          as: "comments",
+        },
+      },
+      {
+        $unwind: {
+          path: "$comments",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          title: {
+            $last: "$title",
+          },
+          author: {
+            $last: "$author",
+          },
+          bookImageUrl: {
+            $last: "$bookImageUrl",
+          },
+          avgRating: {
+            $avg: "$comments.rating",
+          },
+          year: {
+            $last: "$year",
+          },
+          publisher: {
+            $last: "$publisher",
+          },
+          numberOfPages: {
+            $last: "$numberOfPages",
+          },
+          subject: {
+            $last: "$subject",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "commentratings",
+          localField: "_id",
+          foreignField: "book",
+          as: "comments",
+        },
       },
     ]);
     return res.json(books);

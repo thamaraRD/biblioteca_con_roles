@@ -3,6 +3,7 @@ const {
   getCRById,
   updateCRById,
   getAllCRByBook,
+  getBookWhitCR
 } = require("../controllers/commentsRatings.controllers");
 const { validateJWT } = require("../middlewares/validate-jwt");
 
@@ -11,4 +12,5 @@ module.exports = (app) => {
   app.get("/api/cr/:id", validateJWT, getCRById);
   app.put("/api/cr/edit/:id", validateJWT, updateCRById);
   app.get("/api/cr/book/:id", validateJWT, getAllCRByBook);
+  app.get("/api/cr/book/user/:id", validateJWT, getBookWhitCR);
 };
