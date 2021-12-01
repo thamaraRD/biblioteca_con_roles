@@ -161,19 +161,16 @@ export const UserBooksContainer = () => {
           </Button>
         </Col>
       </Row>
-      <Row justify="center">
-        <Col span={16} className="border rounded mx-auto pb-2 pt-4 light-background">
-          {loaded ? (
-            <BookEditRC
-              processSubmit={initialData?.cr === null ? newCR : updateCRById}
-              initialValues={initialValuesAntd(initialData)}
-              titleButton={initialData?.cr === null ? "Crear" : "Actualizar"}
-            />
-          ) : (
-            <h1>Cargando...</h1>
-          )}
-        </Col>
-      </Row>
+
+      {loaded ? (
+        <BookEditRC
+          processSubmit={initialData?.cr === null ? newCR : updateCRById}
+          initialValues={initialValuesAntd(initialData)}
+          titleButton={initialData?.cr === null ? "Crear" : "Actualizar"}
+        />
+      ) : (
+        <h1>Cargando...</h1>
+      )}
     </>
   );
 };

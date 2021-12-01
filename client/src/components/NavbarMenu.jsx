@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { Container, Nav, Navbar, Row, Col, Button } from 'react-bootstrap';
-import { useHistory } from 'react-router';
-import { LoginContext } from '../context/LoginContext';
+import React, { useContext } from "react";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { useHistory } from "react-router";
+import { LoginContext } from "../context/LoginContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserPlus,
@@ -13,7 +13,6 @@ import {
 export const NavbarMenu = () => {
   const history = useHistory();
   const { setIsLogin } = useContext(LoginContext);
-
 
   const handleRegister = () => {
     setIsLogin(false);
@@ -46,7 +45,7 @@ export const NavbarMenu = () => {
               Home
             </Nav.Link>
             <Nav.Link onClick={() => history.push("/user/books")}>
-              <FontAwesomeIcon icon={faBookOpen } className="me-2" />
+              <FontAwesomeIcon icon={faBookOpen} className="me-2" />
               Ver libros
             </Nav.Link>
           </Nav>

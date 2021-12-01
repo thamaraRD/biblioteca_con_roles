@@ -1,15 +1,7 @@
 import React from "react";
 import styles from "../scss/BookEditRC.module.scss";
 import { Form, Input, Button, Row, Col, Rate } from "antd";
-
-const formItemLayout = {
-  labelCol: {
-    span: 6,
-  },
-  wrapperCol: {
-    span: 14,
-  },
-};
+import noBookCover from "../images/book-without-cover.gif";
 
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
@@ -18,21 +10,24 @@ const onFinishFailed = (errorInfo) => {
 export const BookEditRC = ({ processSubmit, initialValues, titleButton }) => {
   const [form] = Form.useForm();
   return (
-    <>
+    <div className="border rounded mx-auto pb-2 pt-4 light-background w-50 d-flex flex-column align-items-center">
       <div className={styles.static}>
         <img
-          src={initialValues.bookImageUrl}
+          src={
+            initialValues.bookImageUrl
+              ? initialValues.bookImageUrl
+              : noBookCover
+          }
           alt={`portada del libro ${initialValues.title}`}
         ></img>
         <p>Autor: {initialValues.author}</p>
         <p>Título: {initialValues.title}</p>
       </div>
-      <Row justify="center">
-        <Col span={13} className={styles.static}>
+      <Row>
+        <Col className={styles.centrar}>
           <Form
             form={form}
             name="validate_other"
-            {...formItemLayout}
             onFinish={processSubmit}
             initialValues={{
               rating: initialValues.rating,
@@ -48,12 +43,13 @@ export const BookEditRC = ({ processSubmit, initialValues, titleButton }) => {
                 placeholder="Deja un comentario al libro..."
                 showCount
                 maxLength={400}
+                style={{ width: 600 }}
               />
             </Form.Item>
             <Form.Item
               wrapperCol={{
                 span: 12,
-                offset: 6,
+                offset: 10,
               }}
             >
               <Button type="primary" htmlType="submit">
@@ -63,6 +59,6 @@ export const BookEditRC = ({ processSubmit, initialValues, titleButton }) => {
           </Form>
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
