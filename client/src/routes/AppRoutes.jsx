@@ -4,7 +4,7 @@ import { NavbarMenu } from "../components/NavbarMenu";
 import { AdminBooksMain } from "../views/AdminBooksMain";
 import { AdminNewEditScreen } from "../views/AdminNewEditScreen";
 import { HomeScreen } from "../views/HomeScreen";
-import LoginAndRegister from "../views/LoginAndRegister";
+import { LoginAndRegister } from "../views/LoginAndRegister";
 import { UserBooksContainer } from "../views/UserBooksContainer";
 import { UserBooksMain } from "../views/UserBooksMain";
 
@@ -35,7 +35,7 @@ export const AppRoutes = () => {
           <UserBooksContainer />
         </Route>
         <Router exact path="/">
-        <HomeScreen />
+          <HomeScreen />
         </Router>
       </Switch>
     </Router>

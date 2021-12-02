@@ -11,7 +11,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const KEY = "biblioteca-app";
-const LoginAndRegister = () => {
+export const LoginAndRegister = () => {
   const { isLogin, setIsLogin } = useContext(LoginContext);
   const { user, setUser } = useContext(UserContext);
   const history = useHistory();
@@ -118,4 +118,3 @@ const LoginAndRegister = () => {
     </div>
   );
 };
-export default LoginAndRegister;

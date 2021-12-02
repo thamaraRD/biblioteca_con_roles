@@ -5,6 +5,7 @@ import styles from "../scss/HomeScreen.module.scss";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { uid } from "../helpers/uniqueId";
+import noBookCover from "../images/book-without-cover.gif";
 
 export const HomeScreen = () => {
   const [bookData, setBookData] = useState([]);
@@ -57,7 +58,7 @@ export const HomeScreen = () => {
               </li>
               <li style={{ listStyle: "none" }}>
                 <img
-                  src={ele.image}
+                  src={ele.image ? ele.image : noBookCover}
                   alt={`Imagen del libro ${ele.title}`}
                   style={{ height: "180px", margin: "0 auto" }}
                 />

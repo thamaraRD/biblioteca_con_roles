@@ -116,14 +116,14 @@ export const AdminNewEditScreen = () => {
   };
 
   useEffect(() => {
-    if (!user?._id) {
+    if (!user) {
       history.push("/login");
     }
   }, [user, history]);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Id del useEffect", id);
+      // console.log("Id del useEffect", id);
       if (id) {
         await getBookById();
       } else {
@@ -164,14 +164,14 @@ export const AdminNewEditScreen = () => {
       </Row>
       <Row justify="center">
         <Col span={16}>
-          {loaded ? (
+          {loaded && user?.role === "admin" ? (
             <AdminNewEditLogic
               processSubmit={id !== undefined ? updateBookById : newBook}
               initialValues={initialData}
               titleButton={id !== undefined ? "Actualizar" : "Crear"}
             />
           ) : (
-            <h1>Cargando...</h1>
+            <h1>No tiene rol de administrador</h1>
           )}
         </Col>
       </Row>
