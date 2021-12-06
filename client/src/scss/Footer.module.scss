@@ -1,12 +1,12 @@
 .footer{
-  background-color: black;
+  background-color:#364d79;
   padding:45px 0 20px;
   font-size:15px;
   line-height:24px;
-  color:#737373;
+  color: white;
 
   h6{
-    color:#fff;
+    color:#fadb14;
   font-size:16px;
   text-transform:uppercase;
   margin-top:5px;
@@ -19,21 +19,13 @@
   }
 
   a{
-    color:#737373;
+    color: white;
   }
 
   a:hover{
-    color: white;
+    color: aqua;
   text-decoration:none;
   }
 
-  .social-icons{
-    text-align: right;
-  }
 
-  li{
-    display: inline-block;
-    padding-left:0;
-  list-style:none;
-  }
 }

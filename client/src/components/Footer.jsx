@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../scss/Footer.module.scss";
-import { FacebookOutlined, LinkedinOutlined } from "@ant-design/icons";
+import { FacebookOutlined, LinkedinOutlined, TwitterOutlined } from "@ant-design/icons";
 
 export const Footer = () => {
   return (
@@ -18,23 +18,28 @@ export const Footer = () => {
                 nuestros usuarios.
               </p>
             </div>
+            <div className="col-md-3 mx-auto mt-0">
+            <h6>Síguenos en nuestras redes</h6>
+            <p>
+              <a href={"/"}>
+              <TwitterOutlined className="fs-4" />
+              </a>
+            </p>
+            <p>
+            <a href={"/"}>
+                <FacebookOutlined className="fs-4" />
+              </a>
+            </p>
+            <p>
+              <a href={"/"}>
+                <LinkedinOutlined className="fs-4" />
+              </a>
+              </p>
           </div>
-
-          <ul className="social-icons">
-            <li>
-              <a href={"/"}>
-                <FacebookOutlined className="fs-3" />
-              </a>
-            </li>
-            <li>
-              <a href={"/"}>
-                <LinkedinOutlined className="fs-3" />
-              </a>
-            </li>
-          </ul>
+          </div>
           <hr />
         </div>
-        <div className="container text-center text-md-start">
+        <div className="container text-center">
           <p>Copyright &copy; 2021</p>
         </div>
       </footer>
