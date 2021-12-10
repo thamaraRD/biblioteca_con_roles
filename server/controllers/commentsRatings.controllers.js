@@ -1,7 +1,7 @@
 const CommentRating = require("../models/commentsRatings.model");
 const Book = require("../models/books.model");
 
-//Crear comentario y rating [admin]
+//Crear comentario y rating
 module.exports.createCR = async (req, res) => {
   try {
     const data = {
