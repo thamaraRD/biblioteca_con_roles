@@ -28,7 +28,7 @@ module.exports.loginUser = async (req, res) => {
     const { _id, firstName, email, password, role } = user;
     const validPassword = bcrypt.compareSync(req.body.password, password);
     if (validPassword) {
-      const token = await genJWT(_id, firstName, email);
+      const token = await genJWT(_id, firstName, email, role);
       return res.json({
         _id: _id,
         firstName: firstName,
