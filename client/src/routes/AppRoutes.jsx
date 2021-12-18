@@ -4,7 +4,7 @@ import { NavbarMenu } from "../components/NavbarMenu";
 import { AdminBooksMain } from "../views/AdminBooksMain";
 import { AdminNewEditScreen } from "../views/AdminNewEditScreen";
 import { HomeScreen } from "../views/HomeScreen";
-import { LoginAndRegister } from "../views/LoginAndRegister";
+import { LoginRegisterScreen } from "../views/LoginRegisterScreen";
 import { UserBooksContainer } from "../views/UserBooksContainer";
 import { UserBooksMain } from "../views/UserBooksMain";
 
@@ -14,10 +14,10 @@ export const AppRoutes = () => {
       <NavbarMenu />
       <Switch>
         <Route exact path="/login">
-          <LoginAndRegister />
+          <LoginRegisterScreen />
         </Route>
         <Route exact path="/register">
-          <LoginAndRegister />
+          <LoginRegisterScreen />
         </Route>
         <Route exact path="/admin/books">
           <AdminBooksMain />

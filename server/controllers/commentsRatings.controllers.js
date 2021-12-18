@@ -64,8 +64,6 @@ module.exports.getAllCRByBook = async (req, res) => {
       "user",
       "firstName"
     );
-    // .populate("book");
-    // console.log("size object", Object.keys(crById).length);
     if (Object.keys(crById).length === 0) {
       return res.json(crById);
     } else {
@@ -73,7 +71,9 @@ module.exports.getAllCRByBook = async (req, res) => {
         avgRating:
           crById.map((ele) => ele.rating).reduce((prev, acc) => prev + acc) /
           crById.length,
-        comments: crById,
+        comments: crById.sort((a, b) =>
+          a.updatedAt > b.updatedAt ? -1 : b.updatedAt > a.updatedAt ? 1 : 0
+        ),
       };
       return res.json(data);
     }

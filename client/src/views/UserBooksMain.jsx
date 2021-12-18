@@ -1,16 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "antd/dist/antd.css";
-import { Table, Image, Badge, Button, Row, Col, Rate, Modal } from "antd";
-import { axiosWithToken } from "../helpers/axiosWithToken";
+import {
+  Table,
+  Image,
+  Badge,
+  Button,
+  Row,
+  Col,
+  Rate,
+  Modal,
+  Timeline,
+} from "antd";
+import { axiosWithToken } from "../helpers/axios";
 import { EditOutlined, WechatOutlined } from "@ant-design/icons";
 import noBookCover from "../images/book-without-cover.gif";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../contexts/UserContext";
 import Swal from "sweetalert2";
 import { uid } from "../helpers/uniqueId";
 import { uniqueArrayData } from "../helpers/uniqueArrayData";
 import styles from "../scss/UserBooksMain.module.scss";
 import moment from "moment";
+import "moment/locale/es-us";
 import { Container } from "react-bootstrap";
 
 const KEY = "biblioteca-app";
@@ -21,6 +32,7 @@ export const UserBooksMain = () => {
   const { user, setUser } = useContext(UserContext);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
+  const [allComments, setAllComments] = useState({});
   const history = useHistory();
 
   //Obtener todos los libros de la base de datos
@@ -170,12 +182,11 @@ export const UserBooksMain = () => {
     console.log("Table params", pagination, filters, sorter);
   };
 
-  const [allComments, setAllComments] = useState({});
-
   const getAllCRByBook = async (record) => {
     try {
       const data = await axiosWithToken(`cr/book/${record._id}`);
       setAllComments(data.data);
+      console.log("Hey there", data.data);
     } catch (err) {
       console.log("Error al consultar todos los libros");
       console.log("error", err);
@@ -260,19 +271,22 @@ export const UserBooksMain = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        {allComments?.comments?.map((comment) => (
-          <div key={uid()}>
-            <p>
-              <b> Comentario de {comment?.user?.firstName}:</b>
+        <Timeline>
+          {allComments?.comments?.map((comment) => (
+            <Timeline.Item key={uid()}>
+              <span>
+                <b> Comentario de {comment?.user?.firstName}:</b>
+              </span>
+              <br />
+              <Rate disabled defaultValue={comment?.rating} />
               <p>
-                {" "}
-                "<em>{comment?.comment}</em>"{" "}
+                "<em>{comment?.comment}</em>"
+                <br />
+                Publicado {moment(comment?.updatedAt).fromNow()}
               </p>
-              publicado: {moment(comment?.updatedAt).startOf("hour").fromNow()}
-            </p>
-            <hr />
-          </div>
-        ))}
+            </Timeline.Item>
+          ))}
+        </Timeline>
       </Modal>
     </Container>
   );
