@@ -18,7 +18,7 @@ export const Footer = () => {
                 Aquí encontrarás información útil relacionada con los libros que
                 están en tendencia, lo más demandados, los que te llevan a
                 soñar, enamorarte y vivir una vida de fantasía mientras los
-                lees. Déjate guiar a través de las recomendaciones echas por
+                lees. Déjate guiar a través de las recomendaciones hechas por
                 nuestros usuarios.
               </p>
             </div>
