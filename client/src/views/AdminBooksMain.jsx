@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "antd/dist/antd.css";
 import { Table, Image, Badge, Button, Row, Col } from "antd";
-import { axiosWithToken } from "../helpers/axiosWithToken";
+import { axiosWithToken } from "../helpers/axios";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import noBookCover from "../images/book-without-cover.gif";
 import { UserContext } from "../context/UserContext";

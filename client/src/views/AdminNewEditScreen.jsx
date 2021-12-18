@@ -3,7 +3,7 @@ import { Button, Row, Col } from "antd";
 import { useHistory, useParams } from "react-router-dom";
 import { AdminNewEditLogic } from "../components/AdminNewEditLogic";
 import Swal from "sweetalert2";
-import { axiosWithToken } from "../helpers/axiosWithToken";
+import { axiosWithToken } from "../helpers/axios";
 import { UserContext } from "../context/UserContext";
 
 const KEY = "biblioteca-app";

@@ -3,19 +3,16 @@ import { Footer } from "../components/Footer";
 import { Carousel, Rate } from "antd";
 import styles from "../scss/HomeScreen.module.scss";
 import Swal from "sweetalert2";
-import axios from "axios";
 import { uid } from "../helpers/uniqueId";
 import noBookCover from "../images/book-without-cover.gif";
+import { axiosWithoutToken } from "../helpers/axios";
 
 export const HomeScreen = () => {
   const [bookData, setBookData] = useState([]);
 
   const getBooksRCHomeScreen = async () => {
     try {
-      const RCHomeScreen = await axios.get(
-        `${process.env.REACT_APP_API_URL}/books/homescreen/crs`
-      );
-      // console.log("todos los comentarios del libro home screen", RCHomeScreen);
+      const RCHomeScreen = await axiosWithoutToken("books/homescreen/crs");
       setBookData(RCHomeScreen.data);
     } catch (err) {
       console.log("Error al obtener comentario/rating del libro", err);
@@ -36,10 +33,16 @@ export const HomeScreen = () => {
     let data = [];
     for (const libro of bookData) {
       if (libro.comments.length > 0) {
+        const getRandomIntInclusive = (min, max) => {
+          min = Math.ceil(min);
+          max = Math.floor(max);
+          return Math.floor(Math.random() * (max - min) + min);
+        };
+        const randomNum = getRandomIntInclusive(0, libro.comments.length);
         data.push({
           title: libro.title,
-          comment: libro.comments[0].comment,
-          rating: libro.comments[0].rating,
+          comment: libro.comments[randomNum].comment,
+          rating: libro.comments[randomNum].rating,
           image: libro.bookImageUrl,
         });
       }
@@ -54,7 +57,10 @@ export const HomeScreen = () => {
             <ul className={styles.contentStyle}>
               <li style={{ listStyle: "none" }}>
                 {" "}
-                <span style={{ fontSize: "1.5rem" }}> {ele.title}</span>{" "}
+                <span style={{ fontSize: "1.5rem", lineHeight: "3rem" }}>
+                  {" "}
+                  {ele.title}
+                </span>{" "}
               </li>
               <li style={{ listStyle: "none" }}>
                 <img
