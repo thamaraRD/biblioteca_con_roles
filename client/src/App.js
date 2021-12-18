@@ -1,5 +1,5 @@
-import { LoginProvider } from "./context/LoginContext";
-import { UserProvider } from "./context/UserContext";
+import { LoginProvider } from "./contexts/LoginContext";
+import { UserProvider } from "./contexts/UserContext";
 import { AppRoutes } from "./routes/AppRoutes";
 
 function App() {

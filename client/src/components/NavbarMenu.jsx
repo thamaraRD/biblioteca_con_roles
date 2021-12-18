@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { useHistory } from "react-router";
-import { LoginContext } from "../context/LoginContext";
+import { LoginContext } from "../contexts/LoginContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserPlus,

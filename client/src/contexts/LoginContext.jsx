@@ -1,13 +1,13 @@
-import React, { createContext, useState } from 'react';
+import { createContext, useState } from "react";
 
 export const LoginContext = createContext();
 
 export const LoginProvider = (props) => {
-const [isLogin, setIsLogin] = useState();
+  const [isLogin, setIsLogin] = useState();
 
-return (
+  return (
     <LoginContext.Provider value={{ isLogin, setIsLogin }}>
-    {props.children}
+      {props.children}
     </LoginContext.Provider>
-);
+  );
 };

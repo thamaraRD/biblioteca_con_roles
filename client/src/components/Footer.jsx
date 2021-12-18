@@ -1,6 +1,10 @@
 import React from "react";
 import styles from "../scss/Footer.module.scss";
-import { FacebookOutlined, LinkedinOutlined, TwitterOutlined } from "@ant-design/icons";
+import {
+  FacebookOutlined,
+  LinkedinOutlined,
+  TwitterOutlined,
+} from "@ant-design/icons";
 
 export const Footer = () => {
   return (
@@ -14,28 +18,28 @@ export const Footer = () => {
                 Aquí encontrarás información útil relacionada con los libros que
                 están en tendencia, lo más demandados, los que te llevan a
                 soñar, enamorarte y vivir una vida de fantasía mientras los
-                lees. Dejate guiar a través de las recomendaciones echas por
+                lees. Déjate guiar a través de las recomendaciones echas por
                 nuestros usuarios.
               </p>
             </div>
             <div className="col-md-3 mx-auto mt-0">
-            <h6>Síguenos en nuestras redes</h6>
-            <p>
-              <a href={"/"}>
-              <TwitterOutlined className="fs-4" />
-              </a>
-            </p>
-            <p>
-            <a href={"/"}>
-                <FacebookOutlined className="fs-4" />
-              </a>
-            </p>
-            <p>
-              <a href={"/"}>
-                <LinkedinOutlined className="fs-4" />
-              </a>
+              <h6>Síguenos en nuestras redes</h6>
+              <p>
+                <a href={"/"}>
+                  <TwitterOutlined className="fs-4" />
+                </a>
               </p>
-          </div>
+              <p>
+                <a href={"/"}>
+                  <FacebookOutlined className="fs-4" />
+                </a>
+              </p>
+              <p>
+                <a href={"/"}>
+                  <LinkedinOutlined className="fs-4" />
+                </a>
+              </p>
+            </div>
           </div>
           <hr />
         </div>

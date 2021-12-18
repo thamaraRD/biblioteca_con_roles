@@ -4,7 +4,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { AdminNewEditLogic } from "../components/AdminNewEditLogic";
 import Swal from "sweetalert2";
 import { axiosWithToken } from "../helpers/axios";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../contexts/UserContext";
 
 const KEY = "biblioteca-app";
 
