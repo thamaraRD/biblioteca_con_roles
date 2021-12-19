@@ -38,7 +38,7 @@ export const UserFormAntd = (props) => {
       console.log("Respuesta al registrar usuario", response);
       Swal.fire({
         icon: "success",
-        title: `<strong>${values.fullName}</strong> se registró exitosamente. Por favor, inicie sesión`,
+        title: `<strong>${values.firstName}</strong> se registró exitosamente. Por favor, inicie sesión`,
         showConfirmButton: true,
         confirmButtonText: "Ok",
       }).then((result) => {
@@ -126,7 +126,7 @@ export const UserFormAntd = (props) => {
                   required: true,
                   message: "Por favor, ingrese su nombre",
                 },
-                { min: 5, message: "Mínimo 3 caracteres" },
+                { min: 3, message: "Mínimo 3 caracteres" },
               ]}
             >
               <Input placeholder="John" />
@@ -143,7 +143,7 @@ export const UserFormAntd = (props) => {
                   required: true,
                   message: "Por favor, ingrese su apellido",
                 },
-                { min: 5, message: "Mínimo 3 caracteres" },
+                { min: 3, message: "Mínimo 3 caracteres" },
               ]}
             >
               <Input placeholder="Wick" />
