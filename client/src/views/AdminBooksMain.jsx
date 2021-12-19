@@ -150,6 +150,7 @@ export const AdminBooksMain = () => {
       key: uid(),
       title: "N.º de págs.",
       dataIndex: "numberOfPages",
+      align: "right",
       sorter: (a, b) => a.numberOfPages - b.numberOfPages,
     },
     {

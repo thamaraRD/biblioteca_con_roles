@@ -1,3 +1,5 @@
+//TODO: en el rating, indicar también con un número, la cantidad de comentarios, en caso de que tenga al menos 1
+
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import "antd/dist/antd.css";
@@ -128,6 +130,7 @@ export const UserBooksMain = () => {
     {
       key: uid(),
       title: "N.º de págs.",
+      align: "right",
       dataIndex: "numberOfPages",
       sorter: (a, b) => a.numberOfPages - b.numberOfPages,
     },
