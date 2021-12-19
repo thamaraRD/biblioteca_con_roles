@@ -145,17 +145,29 @@ export const UserBooksMain = () => {
     {
       key: uid(),
       title: "Rating",
-      dataIndex: "avgRating",
       width: "15%",
       defaultSortOrder: "descend",
       sorter: (a, b) => a.avgRating - b.avgRating,
       render: (record) => {
         return (
-          <Rate
-            allowHalf
-            disabled
-            defaultValue={record === null ? 0 : record}
-          />
+          <>
+            <Rate
+              allowHalf
+              disabled
+              defaultValue={record.avgRating === null ? 0 : record.avgRating}
+            />
+            {record.comments.length === 1 ? (
+              <p className="text-center text-danger">
+                {record.comments.length} reseña
+              </p>
+            ) : record.comments.length > 1 ? (
+              <p className="text-center text-danger">
+                {record.comments.length} reseñas
+              </p>
+            ) : (
+              <p className="text-center text-dark">Sin reseñas</p>
+            )}
+          </>
         );
       },
     },
@@ -189,10 +201,8 @@ export const UserBooksMain = () => {
     try {
       const data = await axiosWithToken(`cr/book/${record._id}`);
       setAllComments(data.data);
-      console.log("Hey there", data.data);
     } catch (err) {
-      console.log("Error al consultar todos los libros");
-      console.log("error", err);
+      console.log("eError al consultar todos los libros", err);
       if (err.response.status === 401) {
         Swal.fire({
           icon: "error",
@@ -281,7 +291,7 @@ export const UserBooksMain = () => {
                 <b> Comentario de {comment?.user?.firstName}:</b>
               </span>
               <br />
-              <Rate disabled defaultValue={comment?.rating} />
+              <Rate allowHalf disabled defaultValue={comment?.rating} />
               <p>
                 "<em>{comment?.comment}</em>"
                 <br />
