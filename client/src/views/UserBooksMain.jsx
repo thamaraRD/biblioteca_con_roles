@@ -165,7 +165,7 @@ export const UserBooksMain = () => {
                 {record.comments.length} reseñas
               </p>
             ) : (
-              <p className="text-center text-dark">Sin reseñas</p>
+              <p className="text-center text-secondary">Sin reseñas</p>
             )}
           </>
         );
