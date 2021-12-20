@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Form, Row, Col, Input, Button } from "antd";
+import { Form, Row, Col, Input, Button, Checkbox } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { LoginContext } from "../contexts/LoginContext";
 import { UserContext } from "../contexts/UserContext";
@@ -9,6 +9,8 @@ import { axiosWithoutToken } from "../helpers/axios";
 
 export const UserFormAntd = (props) => {
   const { titleSubmitButton } = props;
+
+  const [askSecret, setAskSecret] = useState(false);
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -23,6 +25,19 @@ export const UserFormAntd = (props) => {
     },
   };
 
+  const tailFormItemLayout = {
+    wrapperCol: {
+      xs: {
+        span: 24,
+        offset: 0,
+      },
+      sm: {
+        span: 16,
+        offset: 8,
+      },
+    },
+  };
+
   const [form] = Form.useForm();
 
   //Apis de registrar y login
@@ -33,9 +48,18 @@ export const UserFormAntd = (props) => {
 
   //Registro de usuario
   const registerUser = async (values) => {
+    // console.log("Values del registro", values);
     try {
-      const response = await axiosWithoutToken("auth/register", values, "POST");
-      console.log("Respuesta al registrar usuario", response);
+      if (values.secretPhrase) {
+        delete values["secretPhrase"];
+        await axiosWithoutToken(
+          "auth/register",
+          { ...values, role: "admin" },
+          "POST"
+        );
+      } else {
+        axiosWithoutToken("auth/register", values, "POST");
+      }
       Swal.fire({
         icon: "success",
         title: `<strong>${values.firstName}</strong> se registró exitosamente. Por favor, inicie sesión`,
@@ -64,7 +88,7 @@ export const UserFormAntd = (props) => {
   const loginUser = async (values) => {
     try {
       const userData = await axiosWithoutToken("auth/login", values, "POST");
-      console.log("User from axios", userData.data);
+      // console.log("User from axios", userData.data);
       setUser(userData.data);
       localStorage.setItem(KEY, JSON.stringify(userData.data));
       Swal.fire({
@@ -98,6 +122,12 @@ export const UserFormAntd = (props) => {
       setIsLogin(true);
       history.push("/login");
     }
+  };
+
+  const onChange = (e) => {
+    e.target.checked === true && !isLogin
+      ? setAskSecret(true)
+      : setAskSecret(false);
   };
 
   return (
@@ -208,7 +238,6 @@ export const UserFormAntd = (props) => {
                     if (!value || getFieldValue("password") === value) {
                       return Promise.resolve();
                     }
-
                     return Promise.reject(
                       new Error("Las contraseñas ingresadas no coinciden")
                     );
@@ -220,6 +249,38 @@ export const UserFormAntd = (props) => {
             </Form.Item>
           ) : null}
 
+          {!isLogin ? (
+            <>
+              <Form.Item
+                name="admin"
+                valuePropName="checked"
+                {...tailFormItemLayout}
+              >
+                <Checkbox onChange={onChange}>
+                  Quiero registrarme como admin
+                </Checkbox>
+              </Form.Item>
+            </>
+          ) : null}
+
+          {askSecret && !isLogin ? (
+            <Form.Item
+              label="Secreto"
+              name="secretPhrase"
+              rules={[
+                {
+                  validator: (_, value) =>
+                    value === process.env.REACT_APP_SECRET
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error("Secreto incorrecto para ser admin")
+                        ),
+                },
+              ]}
+            >
+              <Input.Password placeholder="Ingrese el secreto para ser admin" />
+            </Form.Item>
+          ) : null}
           <Button type="primary" htmlType="submit" className="mb-3">
             {titleSubmitButton}
           </Button>
